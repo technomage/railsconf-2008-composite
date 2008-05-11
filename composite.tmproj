@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>composite/app/controllers/virtual_item_controller.rb</string>
+	<string>composite/app/models/virtual_item.rb</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -13,8 +13,6 @@
 			<string>composite</string>
 			<key>regexFolderFilter</key>
 			<string>!.*/(\.[^/]*|CVS|_darcs|_MTN|\{arch\}|blib|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle))$</string>
-			<key>selected</key>
-			<true/>
 			<key>sourceDirectory</key>
 			<string>composite</string>
 		</dict>
@@ -65,7 +63,35 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>composite/app/models/group.rb</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>composite/app/models/item.rb</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>composite/app/models/place.rb</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -86,7 +112,7 @@
 				<key>column</key>
 				<integer>3</integer>
 				<key>line</key>
-				<integer>2</integer>
+				<integer>15</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -165,6 +191,34 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>composite/db/migrate/002_create_groups.rb</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>composite/db/migrate/003_create_places.rb</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>20</integer>
+				<key>line</key>
+				<integer>3</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>composite/vendor/rails/activerecord/lib/active_record/connection_adapters/abstract/schema_definitions.rb</key>
 		<dict>
 			<key>caret</key>
@@ -211,6 +265,9 @@
 	<key>openDocuments</key>
 	<array>
 		<string>composite/app/controllers/virtual_item_controller.rb</string>
+		<string>composite/app/models/group.rb</string>
+		<string>composite/db/migrate/003_create_places.rb</string>
+		<string>composite/db/migrate/002_create_groups.rb</string>
 		<string>composite/app/models/virtual_item.rb</string>
 		<string>composite/app/controllers/item_controller.rb</string>
 		<string>composite/vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb</string>
@@ -220,12 +277,13 @@
 		<string>composite/app/controllers/application.rb</string>
 		<string>composite/app/views/layouts/technomage.html.erb</string>
 		<string>composite/app/models/item.rb</string>
+		<string>composite/app/models/place.rb</string>
 		<string>composite/db/migrate/001_create_items.rb</string>
 		<string>composite/config/routes.rb</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{307, 488}, {1592, 1000}}</string>
+	<string>{{1451, 380}, {1044, 1157}}</string>
 </dict>
 </plist>
