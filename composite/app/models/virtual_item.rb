@@ -168,6 +168,21 @@ class VirtualItem
   def self.increment_counter(counter_name, id)
     update_counters(id, counter_name => 1)
   end
+
+  # Construct a new object with the provided attribute values
+  def initialize attrs = nil
+    unless attrs.nil?
+      attrs.each do | k, v |
+        if k.to_s.length == 0
+          puts "Argument to new VirtualItem includes empty key: #{attrs.inspect}"
+        end
+        if self.respond_to? "#{k}=".to_sym
+          #puts "Initializing with attribute #{k} and value #{v}"
+          self.send("#{k}=", v)
+        end
+      end
+    end
+  end
     
   # Locate a compound record using the provided arguments
   def self.find(*args)
@@ -212,7 +227,10 @@ class VirtualItem
     end
     temp_col
   end
-  
+
+  def self.rewrite_conditions(options)
+  end
+ 
   # Find the first matching row
   def self.find_initial(o2)
     o2[:limit] = 1
@@ -279,11 +297,11 @@ class VirtualItem
     temp = Group.connection.select_all(
       "select items.id as item_id, groups.id as item_group_id, places.id as place_id,"+
       "       concat_ws('_', items.id, groups.id, places.id) as id, "+cols+
-      "       from items, items_groups, groups, places, places_groups "+
-      "       where items.id = items_groups.item_id AND "+
-      "             items_groups.group_id = groups.id AND "+
-      "             groups.id = places_groups.group_id AND "+
-      "             places.id = places_groups.place_id"+
+      "       from items, groups_items, groups, places, groups_places "+
+      "       where items.id = groups_items.item_id AND "+
+      "             groups_items.group_id = groups.id AND "+
+      "             groups.id = groups_places.group_id AND "+
+      "             places.id = groups_places.place_id"+
       "       #{conditions} #{order} #{limit}")
     result = temp.collect do | r |
       VirtualItem.new(r)

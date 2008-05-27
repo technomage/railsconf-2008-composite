@@ -16,6 +16,16 @@ ActiveRecord::Schema.define(:version => 4) do
     t.datetime "updated_at"
   end
 
+  create_table "groups_items", :id => false, :force => true do |t|
+    t.integer "item_id"
+    t.integer "group_id"
+  end
+
+  create_table "groups_places", :id => false, :force => true do |t|
+    t.integer "place_id"
+    t.integer "group_id"
+  end
+
   create_table "items", :force => true do |t|
     t.string   "part"
     t.integer  "qty"
@@ -24,20 +34,10 @@ ActiveRecord::Schema.define(:version => 4) do
     t.datetime "updated_at"
   end
 
-  create_table "items_groups", :force => true do |t|
-    t.integer "item_id"
-    t.integer "group_id"
-  end
-
   create_table "places", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "places_groups", :force => true do |t|
-    t.integer "place_id"
-    t.integer "group_id"
   end
 
 end
