@@ -4,7 +4,7 @@ class VirtualItem
   def self.columns
     unless @columns
       @columns = []
-      @columns << ActiveRecord::ConnectionAdapters::Column.new("id", "", "integer")
+      @columns << ActiveRecord::ConnectionAdapters::Column.new("id", "", "string")
       Item.columns.each do | col |
         unless @columns.any?{|c|c.name == col.name}
           column = ActiveRecord::ConnectionAdapters::Column.new(col.name, '', col.type)
@@ -93,6 +93,105 @@ class VirtualItem
       attributes
     end
   end
+
+    def self.table_name
+        "DataEntry"
+    end
+    def self.primary_key
+        "id"
+    end
+
+    # Returns the column object for the named attribute.
+    def column_for_attribute(name)
+      self.class.columns_hash[name.to_s]
+    end
+
+    # Contains the names of the generated reader methods.
+    def self.read_methods
+        @read_methods ||= Set.new
+    end
+
+    # Answer if read methods should be generated.  This is false as methods are generated elsewhere
+    def self.generate_read_methods
+        false
+    end
+
+    # The list of generated column names
+    def self.generated_column_names
+      cols = column_names
+      cols = ["item_id", "place_id", "group_id"].concat(cols)
+      cols
+    end
+
+    # Defines an "attribute" method (like #inheritance_column or
+    # #table_name). A new (class) method will be created with the
+    # given name. If a value is specified, the new method will
+    # return that value (as a string). Otherwise, the given block
+    # will be used to compute the value of the method.
+    #
+    # The original method will be aliased, with the new name being
+    # prefixed with "original_". This allows the new method to
+    # access the original value.
+    #
+    # Example:
+    #
+    #   class A < ActiveRecord::Base
+    #     define_attr_method :primary_key, "sysid"
+    #     define_attr_method( :inheritance_column ) do
+    #       original_inheritance_column + "_id"
+    #     end
+    #   end
+    def self.define_attr_method(name, options={}, &block)
+      value = options[:value]
+      code = options[:code]
+      sing = class << self; self; end
+      sing.send(:alias_method, "original_#{name}", name) if sing.send(:method_defined?, name)
+      if block_given?
+        sing.send :define_method, name, &block
+      elsif !value.nil?
+        # use eval instead of a block to work around a memory leak in dev
+        # mode in fcgi
+        sing.class_eval "def #{name}; #{value.to_s.inspect}; end"
+      elsif !code.nil?
+        self.class_eval "def #{name}; #{code.to_s}; end"
+      end
+    end
+
+    prior_methods = self.methods
+    prior_class_methods = self.class.methods
+    # Generate the accessor methods for each attriute
+    self.generated_column_names.each do | col |
+      if col != self.primary_key
+        self.define_attr_method col, :code => "read_attribute('#{col.to_s}')"
+        self.define_attr_method "#{col}=(val)", :code => "write_attribute('#{col}', val)"
+      end
+    end
+    new_methods = self.methods-prior_methods
+    puts "Added methods for attributes: #{new_methods.inspect}"
+    new_class_methods = self.class.methods-prior_class_methods
+    puts "Added class methods for attributes: #{new_class_methods.inspect}"
+
+    # Return the value of an attribute
+    def read_attribute(name)
+      @attributes ||= {}
+      return @attributes[name.to_sym]
+    end
+
+    # Set the value of an attribute
+    def write_attribute(name, value)
+      @attributes ||= {}
+      @attributes[name.to_sym] = value
+    end
+
+    # Return the value of the named attribute when used as an index
+    def [](name)
+      read_attribute name
+    end
+
+    # Set the value of the named attribute when used as an index
+    def []=(name, val)
+      write_attribute name, val
+    end
   
   # Count the number of records that would be returned by a find
   def self.count(options={})
@@ -118,6 +217,46 @@ class VirtualItem
   def save
     create_or_update
   end
+
+    # Attempts to save the record, but instead of just returning false if it couldn't happen, it raises a 
+    # RecordNotSaved exception
+    def save!
+      if !create_or_update
+        RAILS_DEFAULT_LOGGER.error do
+          "\n\n\n\n#### FAILED TO SAVE RECORD ####\n\n#{self.errors.inspect}\n\n##########\n\n\n"
+        end
+        messages = self.errors.full_messages.join("\n")
+        raise(ActiveRecord::RecordNotSaved.new("Unable to save VirtualItem due to errors: #{messages}"))
+      end
+    end
+    
+    # Simplified create_or_update that only updaates existing records
+    def create_or_update
+      #puts "Attributes: #{@attributes.inspect}"
+      item = Item.find(self.item_id)
+      group = Group.find(self.group_id)
+      place = Place.find(self.place_id)
+      
+      self.class.column_names.each do | col |
+        if (col != VirtualItem.primary_key)
+          val = self.send col.to_sym
+          setter = "#{col}=".to_sym
+          if item.respond_to? setter
+            item.send setter, val
+          end
+          if group.respond_to? setter
+            group.send setter, val
+          end
+          if place.respond_to? setter
+            place.send setter, val
+          end
+        end
+      end
+      
+      item.save!
+      group.save!
+      place.save!
+    end
 
   # A generic "counter updater" implementation, intended primarily to be
   # used by increment_counter and decrement_counter, but which may also
@@ -295,7 +434,7 @@ class VirtualItem
     end
     cols = column_names.reject{|n| n == "id"}.collect{|cn| qualify_column cn}.join(",")
     temp = Group.connection.select_all(
-      "select items.id as item_id, groups.id as item_group_id, places.id as place_id,"+
+      "select items.id as item_id, groups.id as group_id, places.id as place_id,"+
       "       concat_ws('_', items.id, groups.id, places.id) as id, "+cols+
       "       from items, groups_items, groups, places, groups_places "+
       "       where items.id = groups_items.item_id AND "+
@@ -463,28 +602,6 @@ class VirtualItem
 
   end
   self.class_eval {extend FromActiveRecordClassMethods}
-  
-  def self.table_name
-      "DataEntry"
-  end
-  def self.primary_key
-      "id"
-  end
-
-  # Returns the column object for the named attribute.
-  def column_for_attribute(name)
-    self.class.columns_hash[name.to_s]
-  end
-
-  # Contains the names of the generated reader methods.
-  def self.read_methods
-      @read_methods ||= Set.new
-  end
-
-  # Answer if read methods should be generated.  This is false as methods are generated elsewhere
-  def self.generate_read_methods
-      false
-  end
 
   Symbol.class_eval do
     def humanize

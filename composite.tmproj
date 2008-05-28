@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>composite/stories/helper.rb</string>
+	<string>composite/app/models/virtual_item.rb</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -140,30 +140,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>49</integer>
 				<key>line</key>
-				<integer>232</integer>
+				<integer>263</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>209</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>230</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>232</integer>
-			</dict>
+			<integer>416</integer>
 		</dict>
 		<key>composite/app/views/layouts/technomage.html.erb</key>
 		<dict>
@@ -284,9 +268,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>11</integer>
 				<key>line</key>
-				<integer>5</integer>
+				<integer>6</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -298,14 +282,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>69</integer>
+				<integer>14</integer>
 				<key>line</key>
-				<integer>36</integer>
+				<integer>39</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
 		<key>composite/vendor/rails/activerecord/lib/active_record/connection_adapters/abstract/schema_definitions.rb</key>
 		<dict>
@@ -366,6 +350,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{1508, 334}, {1039, 1244}}</string>
+	<string>{{1448, 334}, {1112, 1244}}</string>
 </dict>
 </plist>
